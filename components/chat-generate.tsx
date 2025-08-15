@@ -1,7 +1,5 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,14 +9,65 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Send, User } from 'lucide-react';
 import Image from 'next/image';
 
-export default function Chat() {
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+export default function ChatGenerate() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState('');
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-    }),
-  });
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendMessage = async (text: string) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: text,
+      timestamp: new Date(),
+    };
+
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: newMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const data = await response.json();
+      
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.text,
+        timestamp: new Date(),
+      };
+
+      setMessages([...newMessages, assistantMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col max-w-4xl mx-auto" style={{ height: 'calc(100vh - 56px)' }}>
@@ -67,13 +116,9 @@ export default function Chat() {
                         : 'bg-muted'
                     }`}
                   >
-                    <div className="text-sm">
-                      {message.parts.map((part, index) =>
-                        part.type === 'text' ? <span key={index}>{part.text}</span> : null
-                      )}
-                    </div>
+                    <div className="text-sm">{message.content}</div>
                     <span className="text-xs opacity-70 mt-1 block">
-                      {new Date().toLocaleTimeString()}
+                      {message.timestamp.toLocaleTimeString()}
                     </span>
                   </Card>
                   {message.role === 'user' && (
@@ -86,7 +131,7 @@ export default function Chat() {
                 </div>
               ))
             )}
-            {status === 'submitted' && (
+            {isLoading && (
               <div className="flex gap-3 justify-start">
                 <Avatar className="h-8 w-8">
                   <Image
@@ -114,8 +159,8 @@ export default function Chat() {
         <form 
           onSubmit={(e) => {
             e.preventDefault();
-            if (input.trim() && status === 'ready') {
-              sendMessage({ text: input });
+            if (input.trim() && !isLoading) {
+              sendMessage(input);
               setInput('');
               setTimeout(() => {
                 inputRef.current?.focus();
@@ -132,7 +177,7 @@ export default function Chat() {
             placeholder="Type your message..."
             className="flex-1"
           />
-          <Button type="submit" disabled={!input?.trim() || status !== 'ready'}>
+          <Button type="submit" disabled={!input?.trim() || isLoading}>
             <Send className="h-4 w-4" />
           </Button>
         </form>
