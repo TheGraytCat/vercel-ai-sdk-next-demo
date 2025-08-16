@@ -1,14 +1,15 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
+import { useChat, useCompletion } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useMemo, KeyboardEvent, ChangeEvent, FormEvent } from 'react';
+import debounce from 'lodash.debounce';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, User } from 'lucide-react';
+import { Send, User, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Chat() {
@@ -19,6 +20,62 @@ export default function Chat() {
       api: '/api/chat',
     }),
   });
+
+  const {
+    completion,
+    complete,
+    isLoading: isCompletionLoading,
+    stop: stopCompletion,
+  } = useCompletion({
+    api: '/api/completion',
+    experimental_throttle: 50,
+    onError: (error) => {
+      console.error('Completion error:', error);
+    },
+  });
+
+  const completeRef = useRef(complete);
+  completeRef.current = complete;
+
+  // Create a debounced version of the complete function
+  const debouncedComplete = useMemo(
+    () => debounce((value: string) => {
+      if (value.length > 3) {
+        completeRef.current(value);
+      }
+    }, 300),
+    []
+  );
+
+  // Handle tab key to accept suggestion
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Tab' && completion) {
+      e.preventDefault();
+      setInput(input + ' ' + completion);
+      debouncedComplete(input + ' ' + completion);
+    }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInput(value);
+    stopCompletion();
+    debouncedComplete.cancel(); 
+    debouncedComplete(value);
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (input.trim() && status === 'ready') {
+      sendMessage({ text: input });
+      setInput('');
+      // Cancel any pending completions
+      stopCompletion();
+      debouncedComplete.cancel(); 
+    }
+  };
+
+  const showSuggestion = completion && input.length > 3 && !input.endsWith(completion);
 
   return (
     <div className="flex flex-col max-w-4xl mx-auto" style={{ height: 'calc(100vh - 56px)' }}>
@@ -110,32 +167,52 @@ export default function Chat() {
         </ScrollArea>
       </div>
 
-      <div className="border-t bg-background py-4 px-20">
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (input.trim() && status === 'ready') {
-              sendMessage({ text: input });
-              setInput('');
-              setTimeout(() => {
-                inputRef.current?.focus();
-              }, 100);
-            }
-          }} 
-          className="flex gap-2"
-        >
-          <Input
-            autoFocus
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1"
-          />
-          <Button type="submit" disabled={!input?.trim() || status !== 'ready'}>
-            <Send className="h-4 w-4" />
-          </Button>
-        </form>
+      <div className="border-t bg-background">
+        {/* Suggestion Bar */}
+        {(showSuggestion || isCompletionLoading) && input.length > 0 && (
+          <div className="px-20 pt-3 pb-1">
+            <div className="relative">
+              {isCompletionLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 bg-muted/50 rounded-md">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span>Generating suggestion...</span>
+                </div>
+              ) : completion ? (
+                <div className="p-2 bg-muted/50 rounded-md">
+                  <div className="text-sm">
+                    <span className="text-foreground">{input}{' '}</span>
+                    <span className="text-muted-foreground opacity-50">
+                      {completion}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Press <kbd className="px-1 py-0.5 text-xs bg-background border rounded">Tab</kbd> to accept
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
+
+        <div className="py-4 px-20">
+          <form 
+            onSubmit={handleSubmit} 
+            className="flex gap-2"
+          >
+            <Input
+              autoFocus
+              ref={inputRef}
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Type your message..."
+              className="flex-1"
+            />
+            <Button type="submit" disabled={!input?.trim() || status !== 'ready'}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );
