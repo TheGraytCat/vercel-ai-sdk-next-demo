@@ -138,7 +138,7 @@ The AI assistant identifies as "The Gray Cat" - a chunky, friendly British Short
 ## 📚 Learn More
 
 - [Vercel AI SDK Documentation](https://sdk.vercel.ai)
-- [AI Elements Documentation](https://vercel.com/docs/ai-elements)
+- [AI Elements Documentation](https://ai-sdk.dev/elements/overview)
 - [Google AI Studio](https://aistudio.google.com)
 - [OpenAI Platform](https://platform.openai.com)
 - [shadcn/ui](https://ui.shadcn.com)
