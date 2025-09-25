@@ -45,7 +45,7 @@ export default function ChatAIElements() {
   };
 
   return (
-    <div className="flex flex-col max-w-4xl mx-auto" style={{ height: 'calc(100vh - 56px)' }}>
+    <div className="flex flex-col max-w-4xl mx-auto" style={{ height: 'calc(100vh - 64px)' }}>
       <Conversation className="flex-1 relative">
         <ConversationContent className="p-4">
           {messages.length === 0 ? (
