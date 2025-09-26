@@ -94,8 +94,8 @@ export default function Chat() {
                       className="rounded-full"
                     />
                   </div>
-                  <h3 className="text-lg font-medium">🐱 Start a conversation</h3>
-                  <p className="text-sm">🐱 Send a message to begin chatting with the AI agent.</p>
+                  <h3 className="text-lg font-medium">😺 Start a conversation</h3>
+                  <p className="text-sm">🐾 Send a message to begin chatting with your feline AI assistant!</p>
                 </div>
               </div>
             ) : (
@@ -175,7 +175,7 @@ export default function Chat() {
               {isCompletionLoading ? (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 bg-muted/50 rounded-md">
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  <span>🐱 Generating suggestion...</span>
+                  <span>🐱 Generating purr-fect suggestion...</span>
                 </div>
               ) : completion ? (
                 <div className="p-2 bg-muted/50 rounded-md">
@@ -186,7 +186,7 @@ export default function Chat() {
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    🐱 Press <kbd className="px-1 py-0.5 text-xs bg-background border rounded">Tab</kbd> to accept
+                    Press <kbd className="px-1 py-0.5 text-xs bg-background border rounded">Tab</kbd> to accept 😽
                   </div>
                 </div>
               ) : null}
@@ -205,7 +205,7 @@ export default function Chat() {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="🐱 Type your message..."
+              placeholder="😸 Type your message here, human..."
               className="flex-1"
             />
             <Button type="submit" disabled={!input?.trim() || status !== 'ready'}>
