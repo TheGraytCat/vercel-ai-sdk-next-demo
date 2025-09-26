@@ -155,7 +155,7 @@ export default function ChatGenerate() {
         </ScrollArea>
       </div>
 
-      <div className="border-t bg-background py-4 px-20">
+      <div className="border-t bg-background/95 backdrop-blur-sm py-6 px-6">
         <form 
           onSubmit={(e) => {
             e.preventDefault();
@@ -167,17 +167,23 @@ export default function ChatGenerate() {
               }, 100);
             }
           }} 
-          className="flex gap-2"
+          className="flex gap-3 max-w-4xl mx-auto"
         >
-          <Input
-            autoFocus
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1"
-          />
-          <Button type="submit" disabled={!input?.trim() || isLoading}>
+          <div className="flex-1 relative">
+            <Input
+              autoFocus
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="w-full h-12 px-4 pr-12 rounded-2xl border-border/50 bg-background/95 backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all duration-300"
+            />
+          </div>
+          <Button 
+            type="submit" 
+            disabled={!input?.trim() || isLoading}
+            className="h-12 w-12 rounded-2xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+          >
             <Send className="h-4 w-4" />
           </Button>
         </form>
