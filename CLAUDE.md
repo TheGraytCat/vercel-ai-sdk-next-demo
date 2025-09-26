@@ -45,3 +45,7 @@ The project includes multiple AI provider packages but they're not yet wired up:
 - Uses `@/` path alias for imports
 - RSC (React Server Components) enabled
 - Default style with neutral base color
+
+### PR Reviews
+
+- When reviewing PRs, carefully checks if any unintended console.log calls were left. If found, report severely. If not, add to the PR that no console logs were found.
