@@ -167,26 +167,26 @@ export default function Chat() {
         </ScrollArea>
       </div>
 
-      <div className="border-t bg-background">
+      <div className="border-t bg-background/95 backdrop-blur-sm">
         {/* Suggestion Bar */}
         {(showSuggestion || isCompletionLoading) && input.length > 0 && (
-          <div className="px-20 pt-3 pb-1">
+          <div className="px-6 pt-4 pb-2">
             <div className="relative">
               {isCompletionLoading ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 bg-muted/50 rounded-md">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-xl border border-border/30">
                   <Loader2 className="h-3 w-3 animate-spin" />
                   <span>Generating suggestion...</span>
                 </div>
               ) : completion ? (
-                <div className="p-2 bg-muted/50 rounded-md">
+                <div className="p-3 bg-muted/50 rounded-xl border border-border/30 backdrop-blur-sm">
                   <div className="text-sm">
                     <span className="text-foreground">{input}{' '}</span>
                     <span className="text-muted-foreground opacity-50">
                       {completion}
                     </span>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Press <kbd className="px-1 py-0.5 text-xs bg-background border rounded">Tab</kbd> to accept
+                  <div className="text-xs text-muted-foreground mt-2">
+                    Press <kbd className="px-2 py-1 text-xs bg-background border border-border/50 rounded-md shadow-sm">Tab</kbd> to accept
                   </div>
                 </div>
               ) : null}
@@ -194,21 +194,27 @@ export default function Chat() {
           </div>
         )}
 
-        <div className="py-4 px-20">
+        <div className="py-6 px-6">
           <form 
             onSubmit={handleSubmit} 
-            className="flex gap-2"
+            className="flex gap-3 max-w-4xl mx-auto"
           >
-            <Input
-              autoFocus
-              ref={inputRef}
-              value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Type your message..."
-              className="flex-1"
-            />
-            <Button type="submit" disabled={!input?.trim() || status !== 'ready'}>
+            <div className="flex-1 relative">
+              <Input
+                autoFocus
+                ref={inputRef}
+                value={input}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message..."
+                className="w-full h-12 px-4 pr-12 rounded-2xl border-border/50 bg-background/95 backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-black/20 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary/50 transition-all duration-300"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              disabled={!input?.trim() || status !== 'ready'}
+              className="h-12 w-12 rounded-2xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+            >
               <Send className="h-4 w-4" />
             </Button>
           </form>
