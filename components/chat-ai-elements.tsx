@@ -54,14 +54,14 @@ export default function ChatAIElements() {
                 <div className="mx-auto h-12 w-12 mb-4 relative">
                   <Image
                     src="/cat-avatar.jpg"
-                    alt="AI Assistant"
+                      alt="🐱 AI Assistant"
                     width={48}
                     height={48}
                     className="rounded-full"
                   />
                 </div>
-                <h3 className="text-lg font-medium">Start a conversation</h3>
-                <p className="text-sm">Send a message to begin chatting with the AI agent.</p>
+                <h3 className="text-lg font-medium">🐱 Start a conversation</h3>
+                <p className="text-sm">🐱 Send a message to begin chatting with the AI agent.</p>
               </div>
             </div>
           ) : (
@@ -75,7 +75,7 @@ export default function ChatAIElements() {
                   </MessageContent>
                   <MessageAvatar 
                     src={message.role === 'user' ? '/user-avatar.jpg' : '/cat-avatar.jpg'}
-                    name={message.role === 'user' ? 'User' : 'AI Assistant'}
+                    name={message.role === 'user' ? '🐱 User' : '🐱 AI Assistant'}
                   />
                 </Message>
               ))}
@@ -84,7 +84,7 @@ export default function ChatAIElements() {
                   <MessageContent>
                     <Loader />
                   </MessageContent>
-                  <MessageAvatar src="/cat-avatar.jpg" name="AI Assistant" />
+                  <MessageAvatar src="/cat-avatar.jpg" name="🐱 AI Assistant" />
                 </Message>
               )}
             </>
@@ -100,7 +100,7 @@ export default function ChatAIElements() {
               autoFocus
               value={input}
               onChange={handleInputChange}
-              placeholder="Type your message..."
+              placeholder="🐱 Type your message..."
               className="min-h-[44px] max-h-[200px]"
             />
             <PromptInputToolbar className="absolute right-2 bottom-0">
