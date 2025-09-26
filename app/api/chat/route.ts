@@ -28,8 +28,8 @@ export async function POST(req: Request) {
     console.error("API route error:", error);
     return new Response(
       JSON.stringify({
-        error: "Internal Server Error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: "😿 Meow! Something went wrong",
+        details: error instanceof Error ? `🙀 ${error.message}` : "😾 Unknown error occurred",
       }),
       {
         status: 500,
